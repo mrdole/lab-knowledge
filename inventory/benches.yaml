@@ -1,0 +1,9 @@
+# Benches. `name` is also the bench-lock name and the GitLab resource_group suffix (bench-<name>).
+# Schema: BLUEPRINT.md section 3. Example values - replace with your lab.
+benches:
+  - name: bench-a
+    location: CHANGEME
+    runner_tag: bench-a
+    board: board-a
+    owner: CHANGEME
+    notes: Example bench.

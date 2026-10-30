@@ -1,0 +1,4 @@
+include:
+  - project: tools/agent-platform
+    ref: v0.1.0
+    file: ci/knowledge.gitlab-ci.yml

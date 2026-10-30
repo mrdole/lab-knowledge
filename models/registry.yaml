@@ -1,0 +1,210 @@
+# Model registry: which models exist at which location (model server), and what each is good for.
+# Read by the knowledge server (list_models, recommend_model) and agent-platform/tools/models.py.
+# Schema: BLUEPRINT.md section 5.
+#
+# `id` is what the server's /models endpoint returns. The ids below are guesses until
+#   python3 $AP_HOME/tools/models.py probe --location corp-llm
+# confirms them; fix any it reports as missing.
+#
+# confidence: prior    = from vendor docs / general reputation; not yet tested on our work
+#             measured = backed by our own evals (put the eval ids in `evidence`)
+
+locations:
+  - name: corp-llm
+    description: Main corporate LLM server (OpenAI-compatible)
+    access: api                        # agents can call it
+    data_boundary: internal
+    base_url_env: AP_LLM_BASE_URL      # or base_url: https://...
+    api_key_env: CORP_LLM_KEY
+    provider_id: corp                  # OpenCode provider name in core/opencode.core.json
+
+  - name: github-copilot
+    description: >-
+      GitHub Copilot (VS Code, Copilot app, Copilot CLI). Cloud models; usable by people
+      interactively, not callable by platform agents (no API).
+    access: interactive
+    data_boundary: external            # code and prompts leave the company network
+    docs: https://docs.github.com/en/early-access/copilot/hydrafusion
+
+models:
+  - id: laguna-5.2.1
+    name: Laguna 5.2.1
+    locations: [corp-llm]
+    modalities: [text]
+    tool_calling: good
+    good_for: [planning, orchestration, reasoning, code-review, docs-writing]
+    platform_role: planner
+    confidence: prior
+    notes: Strongest model available per day-to-day use; default orchestrator (AP_MODEL_PLANNER).
+
+  - id: gpt-oss-120b
+    name: GPT OSS 120B
+    locations: [corp-llm]
+    params: 117B MoE (~5B active)
+    context: 128K
+    modalities: [text]
+    tool_calling: good
+    good_for: [coding, tool-calling, orchestration, reasoning]
+    platform_role: builder
+    confidence: prior
+    notes: Default implementer (AP_MODEL_BUILDER). Needs the server's gpt-oss/harmony tool-call parser enabled, or tool calls break.
+
+  - id: gpt-oss-20b
+    name: GPT OSS 20B
+    locations: [corp-llm]
+    params: 21B MoE (~4B active)
+    context: 128K
+    modalities: [text]
+    tool_calling: good
+    good_for: [test-running, tool-calling, summarization, routing]
+    platform_role: small
+    confidence: prior
+    notes: Tester and small_model (titles, summaries). Cheap enough for many parallel runs.
+
+  - id: nemotron-3-super-120b
+    name: NVIDIA Nemotron 3 Super 120B
+    locations: [corp-llm]
+    params: 120B MoE (12B active)
+    modalities: [text]
+    tool_calling: good
+    good_for: [orchestration, tool-calling, coding, reasoning, long-context]
+    confidence: prior
+    notes: >-
+      Built for agentic workloads. Strongest challenger to gpt-oss-120b (builder) and Laguna (planner);
+      bake it off with the firmware and pipeline evals before switching a role.
+
+  - id: gemma-4-31b
+    name: Gemma 4 31B
+    locations: [corp-llm]
+    params: 31B dense
+    modalities: [text]
+    tool_calling: good
+    good_for: [code-review, reasoning, docs-writing, coding]
+    platform_role: reviewer
+    confidence: prior
+    notes: Reviewer (AP_MODEL_REVIEWER) - a different family from the builder so it doesn't share its blind spots.
+
+  - id: gemma-4-26b
+    name: Gemma 4 26B
+    locations: [corp-llm]
+    params: 26B MoE (few B active)
+    modalities: [text]
+    tool_calling: good
+    good_for: [repo-scouting, summarization, coding, tool-calling]
+    platform_role: scout
+    confidence: prior
+    notes: Scout (AP_MODEL_SCOUT) - fast for high-volume file reading.
+
+  - id: gemma-4-e4b
+    name: Gemma 4 E4B
+    locations: [corp-llm]
+    params: ~4B effective
+    modalities: [text]
+    tool_calling: fair
+    good_for: [classification, routing, summarization]
+    avoid_for: [orchestration, coding, code-review]
+    confidence: prior
+    notes: One-shot classify/triage steps only; too small for multi-step agent loops.
+
+  - id: llama-4-scout
+    name: Llama 4 Scout
+    locations: [corp-llm]
+    params: 109B MoE (17B active)
+    modalities: [text, image]
+    tool_calling: fair
+    good_for: [long-context, document-understanding, summarization, vision]
+    confidence: prior
+    notes: Very long context window (check the server's configured limit - it is usually far below the model maximum).
+
+  - id: llama-3.3-70b
+    name: Llama 3.3 70B
+    locations: [corp-llm]
+    params: 70B dense
+    context: 128K
+    modalities: [text]
+    tool_calling: fair
+    good_for: [docs-writing, summarization]
+    avoid_for: [orchestration]
+    confidence: prior
+    notes: Solid writer; weaker than gpt-oss/Nemotron at long multi-step tool loops.
+
+  - id: ministral-3-14b
+    name: Ministral 3 14B
+    locations: [corp-llm]
+    params: 14B dense
+    modalities: [text, image]
+    tool_calling: good
+    good_for: [tool-calling, routing, summarization, vision]
+    confidence: prior
+    notes: Mid-size, native function calling; candidate cheap worker or image triage.
+
+  - id: phi-4
+    name: Microsoft Phi 4
+    locations: [corp-llm]
+    params: 14B dense
+    context: 16K
+    modalities: [text]
+    tool_calling: fair
+    good_for: [reasoning, classification]
+    avoid_for: [long-context, orchestration, repo-scouting]
+    confidence: prior
+    notes: Good math/logic for its size, but the 16K context rules out agent loops over real repos.
+
+  - id: granite-3.3-8b
+    name: Granite 3.3 8B
+    locations: [corp-llm]
+    params: 8B dense
+    context: 128K
+    modalities: [text]
+    tool_calling: fair
+    good_for: [classification, routing, summarization]
+    avoid_for: [orchestration, coding]
+    confidence: prior
+    notes: Small enterprise model; fine for labeling, extraction and routing.
+
+  - id: nemotron-3-nano-omni-30b
+    name: NVIDIA Omni Nano 30B (Nemotron 3 Nano Omni)
+    locations: [corp-llm]
+    params: 30B MoE (3B active)
+    modalities: [text, image, video, audio]
+    tool_calling: unknown
+    good_for: [vision, document-understanding, screen-reading, audio]
+    avoid_for: [orchestration]
+    confidence: prior
+    notes: >-
+      Perception sub-agent - instrument screenshots, spectrum/scope captures, PDFs/datasheets,
+      UI screens, audio. Hands text back to a stronger model for reasoning.
+
+  - id: copilot-hydrafusion
+    name: Copilot HydraFusion (research preview)
+    locations: [github-copilot]
+    modalities: [text]
+    tool_calling: good
+    good_for: [coding, code-review, orchestration, planning, reasoning]
+    confidence: prior
+    notes: >-
+      Not one model: Copilot routes each task through Single, Cascade (cheap draft, quality gate,
+      escalate) or Critique (drafter + critic from a different model family) over cloud models.
+      Select it in the Copilot model picker. Org admins must allow preview features.
+
+  - id: copilot-hydrafusion-max
+    name: Copilot HydraFusion Max (research preview)
+    locations: [github-copilot]
+    modalities: [text]
+    tool_calling: good
+    good_for: [planning, reasoning, code-review, orchestration]
+    confidence: prior
+    notes: Higher reasoning effort for the hardest tasks; same workflows as HydraFusion.
+
+  - id: snowflake-arctic-text2sql
+    name: Snowflake Arctic Text2SQL
+    locations: [corp-llm]
+    params: ~7B
+    modalities: [text]
+    tool_calling: none
+    good_for: [sql]
+    avoid_for: [coding, orchestration, summarization]
+    confidence: prior
+    notes: >-
+      Natural language to SQL only. It is not an embedding model, so knowledge search stays
+      keyword-based until an embedding model is available.

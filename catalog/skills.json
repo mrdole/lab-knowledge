@@ -1,0 +1,112 @@
+{
+  "generated_at": "2026-10-30T17:52:30+00:00",
+  "count": 13,
+  "skills": [
+    {
+      "name": "bench-flash",
+      "description": "Flash a firmware image to a board on a lab bench safely, with bench locking, human approval and post-flash verification. Use whenever a task requires programming hardware.",
+      "project": "agent-platform",
+      "path": "skills/bench-flash/SKILL.md",
+      "scope": "bench",
+      "problems": []
+    },
+    {
+      "name": "bench-instrument-check",
+      "description": "Take read-only measurements from lab instruments (spectrum analyzers, signal generators, power supplies, scopes) through the bench MCP server and compare them to requirements. Use for verifying RF behavior, sanity-checking a bench, or collecting evidence for an MR.",
+      "project": "agent-platform",
+      "path": "skills/bench-instrument-check/SKILL.md",
+      "scope": "bench",
+      "problems": []
+    },
+    {
+      "name": "core-gitlab-mr",
+      "description": "Branch, commit, push and open a draft GitLab merge request with an evidence packet. Use when work is ready for human review in an interactive session. Not used in dispatcher runs, where the dispatcher commits and opens the MR.",
+      "project": "agent-platform",
+      "path": "skills/core-gitlab-mr/SKILL.md",
+      "scope": "core",
+      "problems": []
+    },
+    {
+      "name": "core-handoff",
+      "description": "Structured format for passing work between agents (scout to implementer, implementer to tester and reviewer). Use whenever you finish a step another agent will continue, or when you receive work from another agent.",
+      "project": "agent-platform",
+      "path": "skills/core-handoff/SKILL.md",
+      "scope": "core",
+      "problems": []
+    },
+    {
+      "name": "core-knowledge",
+      "description": "Look up environment facts, lab inventory, known gotchas and existing skills through the knowledge server, and propose new knowledge. Use before guessing anything about networks, proxies, certificates, servers, instruments, benches or internal tooling, and before writing a new skill.",
+      "project": "agent-platform",
+      "path": "skills/core-knowledge/SKILL.md",
+      "scope": "core",
+      "problems": []
+    },
+    {
+      "name": "firmware-vitis-build",
+      "description": "Build firmware inside the vitis-dev container (Vitis 2024.2, Spartan-7 target) from an XSA exported elsewhere. Use when compiling, rebuilding the platform or BSP, or reproducing a CI build failure locally.",
+      "project": "agent-platform",
+      "path": "skills/firmware-vitis-build/SKILL.md",
+      "scope": "firmware",
+      "problems": []
+    },
+    {
+      "name": "it-debug-triage",
+      "description": "Read-only diagnosis of IT and infrastructure problems - connectivity, DNS, proxies, TLS and CA trust, services, disk, CI runners - on hosts the agent can reach. Use when asked why something is broken. Produces ranked findings and a recommended next step, not fixes.",
+      "project": "agent-platform",
+      "path": "skills/it-debug-triage/SKILL.md",
+      "scope": "it",
+      "problems": []
+    },
+    {
+      "name": "meta-add-profile",
+      "description": "Add a new agent profile (a new kind of job) to agent-platform - profile.yaml, opencode.json overlay, RULES.md, skills scope, token, evals. Use when someone wants the platform to handle a new kind of work.",
+      "project": "agent-platform",
+      "path": "skills/meta-add-profile/SKILL.md",
+      "scope": "meta",
+      "problems": []
+    },
+    {
+      "name": "meta-add-skill",
+      "description": "Write a new skill (SKILL.md) for agent-platform following the Agent Skills spec and platform naming rules, after checking that no equivalent skill already exists. Use when a repeated procedure should become reusable instructions.",
+      "project": "agent-platform",
+      "path": "skills/meta-add-skill/SKILL.md",
+      "scope": "meta",
+      "problems": []
+    },
+    {
+      "name": "meta-run-evals",
+      "description": "Run the platform's golden-task evals against the real models, compare with the baseline, and report regressions. Use after changing prompts, skills, permissions or model mappings, and before proposing any self-improvement.",
+      "project": "agent-platform",
+      "path": "skills/meta-run-evals/SKILL.md",
+      "scope": "meta",
+      "problems": []
+    },
+    {
+      "name": "meta-vendor-skill",
+      "description": "Import a third-party skill (from anthropics/skills, OpenHands/extensions or another repo) into agent-platform after reviewing every file, renaming it to platform scope and recording provenance. Use when someone wants to reuse an external skill.",
+      "project": "agent-platform",
+      "path": "skills/meta-vendor-skill/SKILL.md",
+      "scope": "meta",
+      "problems": []
+    },
+    {
+      "name": "notes-curate",
+      "description": "Curate the user's personal knowledge repo - file rough notes, restructure them by kind, merge duplicates, move notes out of the inbox, keep tasks and the work log tidy, and pick notes ready to promote to the team lab-knowledge repo. Use in the notes profile.",
+      "project": "agent-platform",
+      "path": "skills/notes-curate/SKILL.md",
+      "scope": "notes",
+      "problems": []
+    },
+    {
+      "name": "pipeline-debug-ci",
+      "description": "Diagnose and fix failing GitLab CI pipelines and jobs - YAML and include errors, template ref problems, runner tags, missing images or variables, script failures. Use when a pipeline is red or a .gitlab-ci.yml or CI template change is needed.",
+      "project": "agent-platform",
+      "path": "skills/pipeline-debug-ci/SKILL.md",
+      "scope": "pipeline",
+      "problems": []
+    }
+  ],
+  "duplicates": {},
+  "similar": []
+}

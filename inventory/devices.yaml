@@ -1,0 +1,36 @@
+# Lab instruments and boards. The only addresses agents may use.
+# Schema: BLUEPRINT.md section 3. Example entries use documentation addresses (192.0.2.x):
+# replace them with your instruments.
+devices:
+  - name: sa-01
+    kind: spectrum_analyzer
+    model: CHANGEME
+    bench: bench-a
+    visa: TCPIP0::192.0.2.10::inst0::INSTR
+    read_only: true
+    notes: Example entry.
+
+  - name: sg-01
+    kind: signal_generator
+    model: CHANGEME
+    bench: bench-a
+    visa: TCPIP0::192.0.2.11::inst0::INSTR
+    read_only: false
+    write_allowlist: [FREQ, POW]
+    notes: >-
+      Frequency and level only, and only when the session enables writes.
+      Output on/off (OUTP) is deliberately not allowlisted - see docs/bench/rf-safety.md.
+
+  - name: ps-01
+    kind: power_supply
+    model: CHANGEME
+    bench: bench-a
+    visa: TCPIP0::192.0.2.12::inst0::INSTR
+    read_only: true
+    notes: Example entry.
+
+  - name: board-a
+    kind: dut
+    model: Spartan-7 board (CHANGEME)
+    bench: bench-a
+    notes: Flashed via the procedure in docs/bench/flash-procedure.md.
